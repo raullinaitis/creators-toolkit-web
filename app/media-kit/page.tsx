@@ -277,9 +277,6 @@ export default function MediaKitPage() {
       <MediaKitHero 
         primaryButtonText="Partnership Plans"
         primaryButtonLink="#pricing-section"
-        card1Description="Organic reach built through content shaped for consistent, platform-native visibility."
-        card2Description="Fresh audiences reached through content crafted for consistent, platform-native visibility."
-        card3Description="Active interaction earned through content crafted for consistent, platform-native visibility."
         secondaryButtonText="See Case Studies"
         secondaryButtonLink="#results-section"
       />

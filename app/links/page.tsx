@@ -124,7 +124,7 @@ export default function LinksPage() {
         </section>
         <section className="ds-links-contact">
           <h2 className="ds-links-section-title">
-            Let's Work <span className="gradient-accent">Together</span>
+            Let&apos;s Work <span className="gradient-accent">Together</span>
           </h2>
           <Card className="ds-links-contact-card" hover>
             <form
