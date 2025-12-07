@@ -1,0 +1,812 @@
+---
+alwaysApply: true
+---
+
+# Design System Integration Protocol - Headless Shopify
+
+## 🚨 CRITICAL: NO INLINE STYLES
+
+**ABSOLUTE RULE:** NEVER use inline `style={{}}` props. ALL styling MUST be in CSS classes in `components/components.css`.
+
+❌ **FORBIDDEN:**
+```typescript
+<div style={{ padding: 'var(--space-xl)' }}>  // Even with tokens!
+<div style={{ display: 'flex', gap: '16px' }}>
+```
+
+✅ **REQUIRED:**
+```typescript
+<div className="ds-component-name">
+```
+
+Then add CSS:
+```css
+.ds-component-name {
+  padding: var(--space-xl);
+  display: flex;
+  gap: var(--space-md);
+}
+```
+
+**Exception:** Only SVG gradient `<stop>` elements can use inline styles (CSS cannot target them).
+
+---
+
+## Core Principle
+Use self-contained React/TypeScript components with design tokens and component composition. Each component includes its own CSS styles in `components/components.css`, prefixed with `ds-`, following cursor rules. Components use TypeScript interfaces and compose reusable components from the component library. **ALL styling is done via CSS classes - NO inline styles.**
+
+**Source of Truth:** All design tokens are defined in `app/tokens.css`. This file is imported in `app/layout.tsx` and loaded globally.
+
+---
+
+## Available Design System Components
+
+### Current Components (from `components/index.ts`)
+
+#### Buttons
+- `ButtonPrimary` - Main call-to-action (gradient fill)
+- `ButtonSecondary` - Secondary actions (gradient border)
+- `ButtonGhost` - Minimal background buttons
+- Size modifiers: `size="sm" | "md" | "lg"`
+
+#### Cards & Layouts
+- `Card` - Basic content container
+- `CardSimple` - Simplified card
+- `CardFeature` - Feature card with icon
+- `CardFeatureV2` - Alternative feature card
+- `CardFeatureV3` - Third feature card variant
+- `CardStat` - Stat card with large number and label
+- `CardStatV2` - Alternative stat card
+- `CardStatV3` - Third stat card variant
+- `CardTestimonial` - Testimonial with quote and author
+- `ProductCard` - E-commerce product card
+
+#### Forms
+- `Input` - Text input with validation states
+- `Textarea` - Auto-resize textarea with character counter
+- `Select` - Custom styled select dropdown
+- `Checkbox` - Custom checkbox
+- `Toggle` - Toggle switch
+
+#### Navigation
+- `NavItem` - Navigation item component
+- `Header` - Site header
+- `NavBar` - Navigation bar
+
+#### UI Components
+- `Dropdown` - Dropdown menu with keyboard navigation
+- `Breadcrumb` - Breadcrumb navigation
+- `Alert` - Alert/notification (`variant="info|success|warning|error"`)
+- `Tooltip` - Tooltip with positioning
+- `Skeleton` - Loading skeleton (`type="text|card|image"`)
+- `Spinner` - Loading spinner
+- `Blockquote` - Blockquote with author attribution
+- `SectionTitle` - Section title component
+- `SectionParallax` - Parallax wrapper for sections with grid movement (`gridSpeed` prop)
+- `SocialLinks` - Social media icon links
+- `Divider` - Divider with optional centered text
+- `BackToTop` - Back to top button component
+
+#### Media Kit Components
+- `MediaKitAboutV2` - Media kit about section
+- `MediaKitHero` - Media kit hero section
+- `MediaKitLogos` - Media kit logos section
+- `MediaKitDemographics` - Media kit demographics section
+- `MediaKitCaseStudies` - Media kit case studies section
+- `MediaKitPricing` - Media kit pricing section
+- `MediaKitAvailability` - Media kit availability section
+- `MediaKitFAQ` - Media kit FAQ section
+- `MediaKitContact` - Media kit contact section
+
+---
+
+## CSS Custom Properties (Design Tokens)
+
+**All components MUST use these tokens from `app/tokens.css` - NEVER hardcode values.**
+
+### 3-Level Token Hierarchy
+
+The design system uses a 3-level hierarchy:
+1. **Level 1: Master Tokens** - Source of truth (e.g., `--master-accent-primary`)
+2. **Level 2: Semantic Tokens** - Contextual meaning (e.g., `--color-primary`)
+3. **Level 3: Contextual Tokens** - Specific usage (e.g., `--gradient-primary`)
+
+### Level 1: Master Color Controls (Source of Truth)
+
+```css
+--master-accent-primary: #365ca4;          /* Primary brand color */
+--master-accent-secondary: #57c0de;         /* Secondary brand color */
+--master-bg-dark: #000000;                  /* Main page background */
+--master-bg-surface: #030303;               /* Card and surface backgrounds */
+--master-bg-surface-elevated: #111827;
+
+/* Opacity Controls */
+--border-opacity: 0.25;                      /* Card Border Opacity (0-1) */
+--card-bg-opacity: 60;                      /* Card Background Opacity (0-100) */
+```
+
+### Level 2: Semantic Color Mappings
+
+```css
+/* Primary Palette */
+--color-primary: var(--master-accent-primary);
+--color-secondary: var(--master-accent-secondary);
+--color-primary-light: color-mix(in srgb, var(--master-accent-primary) 70%, white);
+--color-secondary-light: color-mix(in srgb, var(--master-accent-secondary) 70%, white);
+--color-accent-cyan: var(--master-accent-primary);
+
+/* Feedback Palette */
+--color-success: #10b981;
+--color-success-bg: #103e26;
+--color-warning: #f59e0b;
+--color-error: #ef4444;
+--color-error-bg: #3e1010;
+
+/* Text Colors */
+--color-text-default: #e5e5e5;
+--color-text-subtle: #d1d5db;
+--color-text-muted: #d1d5db;
+--color-text-badge-secondary: color-mix(in srgb, var(--master-accent-secondary) 80%, white);
+--color-text-badge-accent: color-mix(in srgb, var(--master-accent-primary) 80%, white);
+--color-text-button-primary: #e5e5e5;
+
+/* UI Effects */
+--color-shimmer: rgba(255, 255, 255, 0.15);
+```
+
+### Level 3: Contextual Usage Tokens
+
+```css
+/* Gradients */
+--gradient-primary: linear-gradient(135deg, var(--master-accent-primary), var(--master-accent-secondary));
+--gradient-text: linear-gradient(135deg, var(--master-accent-primary), var(--master-accent-secondary));
+--gradient-card: color-mix(in srgb, var(--master-bg-surface) var(--card-bg-opacity, 60%), transparent);
+--gradient-featured: color-mix(in srgb, var(--master-bg-surface) 80%, transparent);
+--gradient-sale: #dc2626;
+
+/* Backgrounds */
+--color-background-base: var(--master-bg-dark);
+--color-background-minimal: color-mix(in srgb, var(--master-bg-surface) 60%, transparent);
+--color-background-badge-secondary: color-mix(in srgb, var(--master-accent-secondary) 20%, transparent);
+--color-background-badge-accent: color-mix(in srgb, var(--master-accent-primary) 20%, transparent);
+--color-background-badge-success: rgba(16, 185, 129, 0.2);
+
+/* Frosted Glass */
+--frosted-glass-opacity: 5%;
+--frosted-glass-blur: 3px;
+--frosted-glass-bg: color-mix(in srgb, var(--master-bg-surface) var(--frosted-glass-opacity), transparent);
+
+/* Background Patterns */
+--background-grid-pattern: linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px);
+--background-grid-size: 50px 50px;
+--background-radial-gradient: radial-gradient(ellipse at center, rgba(10, 10, 26, 0.9) 0%, var(--master-bg-dark) 100%);
+--background-radial-gradient-mobile: radial-gradient(ellipse at center, rgba(10, 10, 26, 0.9) 0%, rgba(10, 10, 26, 0.7) 60%, var(--master-bg-dark) 100%);
+--background-grid-mask: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 75%);
+--background-grid-mask-mobile: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 90%);
+
+/* Borders */
+--color-border-default: rgb(55, 65, 81);
+--color-border-interactive: var(--master-accent-primary);
+--color-border-featured: var(--master-accent-primary);
+--color-border-badge-secondary: var(--master-accent-secondary);
+--color-border-badge-accent: var(--master-accent-primary);
+--color-border-badge-success: rgb(52, 211, 153);
+--color-border-light: rgba(255, 255, 255, 0.1);
+
+/* Section Backgrounds */
+--gradient-bg-top-left: transparent;
+--gradient-bg-top-right: transparent;
+--gradient-bg-center: transparent;
+--color-bg-surface: rgba(11, 19, 43, 0.75);
+--color-bg-flat: var(--master-bg-dark);
+--color-bg-overlay: rgba(17, 24, 39, 0.5);
+--overlay-bg-25: rgba(0, 0, 0, 0.25);
+--overlay-bg-50: rgba(0, 0, 0, 0.5);
+--overlay-bg-80: rgba(0, 0, 0, 0.8);
+--overlay-bg-95: rgba(0, 0, 0, 0.95);
+--color-black: #000;
+--color-white: #ffffff;
+```
+
+### Typography System
+
+```css
+/* Font Families */
+--font-body: var(--font-outfit, 'Outfit'), sans-serif;
+--font-display: var(--font-outfit, 'Outfit'), sans-serif;
+--font-display-family: var(--font-display);
+--font-body-family: var(--font-body);
+
+/* Font Sizes - Responsive with clamp() */
+--fs-h1: clamp(2.25rem, 5.5vw, 3.5rem);     /* 36px mobile → 56px desktop */
+--fs-h2: clamp(2rem, 4vw, 3rem);             /* 32px mobile → 48px desktop */
+--fs-h3: clamp(1.25rem, 2.2vw, 1.5rem);     /* 20px mobile → 24px desktop */
+--fs-h4: 1.125rem;                          /* 18px */
+--fs-lead: clamp(1.125rem, 1.2vw, 1.375rem);/* 18px → 22px */
+--fs-subheadline: clamp(1.125rem, 1.2vw, 1.375rem);/* 18px → 22px */
+--fs-body: clamp(1rem, 0.6vw + 0.9rem, 1.125rem); /* 16px → ~18px */
+--fs-sm: 0.875rem;
+--fs-caption: 0.75rem;
+
+/* Font Weights */
+--fw-light: 300;
+--fw-normal: 400;
+--fw-medium: 500;
+--fw-semibold: 600;
+--fw-bold: 700;
+--fw-extrabold: 800;
+--fw-h1: 600;
+--fw-h2: 100;
+--fw-h3: var(--fw-normal);
+--fw-h4: var(--fw-normal);
+--fw-lead: var(--fw-light);
+--fw-body: var(--fw-light);
+
+/* Line Heights */
+--lh-tight: 1.2;
+--lh-normal: 1.6;
+--lh-loose: 1.65;
+--lh-h1: 1.15;
+--lh-h2: 1.2;
+--lh-h3: 1.3;
+--lh-h4: 1.35;
+--lh-lead: 1.6;
+--lh-body: 1.6;
+--lh-caption: 1.4;
+
+/* Letter Spacing */
+--letter-spacing-wide: 0.05em;
+--ls-h1: 0em;
+--ls-h2: 0em;
+--ls-h3: 0em;
+--ls-h4: 0em;
+--ls-lead: 0em;
+--ls-body: 0em;
+--ls-caption: 0.02em;
+
+/* Text Transform */
+--tt-h1: none;
+--tt-h2: none;
+--tt-h3: none;
+--tt-h4: none;
+--tt-lead: none;
+--tt-body: none;
+--tt-caption: none;
+
+/* Typography Level Colors */
+--color-h1: var(--color-text-default);
+--color-h2: var(--color-text-default);
+--color-h3: var(--color-text-default);
+--color-h4: var(--color-text-default);
+--color-lead: var(--color-text-subtle);
+--color-body: var(--color-text-default);
+--color-caption: var(--color-text-muted);
+```
+
+### Spacing & Layout
+
+```css
+/* Base Spacing Scale */
+--space-xs: 0.5rem;   /* 8px */
+--space-sm: 1rem;     /* 16px */
+--space-md: 1.5rem;   /* 24px */
+--space-lg: 2rem;     /* 32px */
+--space-xl: 2.5rem;   /* 40px */
+--space-2xl: 3rem;   /* 48px */
+--space-3xl: 3.5rem; /* 56px */
+--space-xxl: 4rem;    /* 64px */
+--space-btn-y-sm: 0.75rem;
+
+/* Container & Layout */
+--container-padding: 3rem 1rem;
+--container-padding-mobile: 2rem 0.75rem;
+--container-padding-mobile-horizontal: 0.75rem;
+--container-padding-horizontal: 1rem;
+--container-max-width: 75rem;
+--container-max-width-narrow: 50rem;
+--card-flex-basis: 17.5rem;
+--card-max-width-sm: 25rem;
+--card-max-width-md: 22.5rem;
+--aspect-ratio-product: 4 / 3;
+
+/* Section Spacing */
+--section-padding-top: var(--space-xxl); /* 4rem */
+--section-padding-bottom: var(--space-xxl); /* 4rem */
+--section-container-padding: var(--space-lg); /* 2rem */
+--section-container-max-width: var(--container-max-width); /* 75rem */
+--section-padding-top-mobile: var(--space-xl); /* 2.5rem */
+--section-container-padding-mobile: var(--space-md); /* 1.5rem */
+
+/* Grid Gaps */
+--gap-row: var(--space-md);
+--gap-col: var(--space-md);
+```
+
+### Border Radius
+
+```css
+--radius-sm: 1.5rem;  /* 24px */
+--radius-md: 2rem;    /* 32px */
+--radius-lg: 2.5rem;  /* 40px */
+--radius-full: 9999px;
+
+/* Border Widths */
+--border-width-default: 1px;
+--border-width-md: 2px;
+--border-width-card: 1px;
+--border-width-accent: 4px;
+--border-width-thick: 4px;
+```
+
+### Animation & Effects
+
+```css
+/* Animation Timing */
+--duration-instant: 100ms;
+--duration-fast: 250ms;
+--duration-base: 500ms;
+--duration-slow: 700ms;
+--duration-chart-animation: 2500ms;  /* For Chart.js animations */
+--duration-bar-animation: 1500ms;    /* For progress bar animations */
+
+/* Animation Delays */
+--delay-card-stagger-1: 0ms;         /* First card in staggered animation */
+--delay-card-stagger-2: 100ms;       /* Second card delay */
+--delay-card-stagger-3: 200ms;       /* Third card delay */
+--delay-bar-stagger: 100ms;          /* Delay multiplier for bar animations */
+
+/* Animation Easing */
+--ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+--ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+--ease-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+--ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+--ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+/* Opacity Values */
+--opacity-logo-image: 0.9;            /* Logo image opacity */
+--opacity-text-subtle: 0.75;         /* Subtle text opacity */
+--opacity-text-muted: 0.9;           /* Muted text opacity */
+--opacity-mask-opaque: 1;            /* Fully opaque for masks */
+--opacity-mask-mid: 0.5;             /* Mid opacity for masks */
+--opacity-mask-transparent: 0;       /* Transparent for masks */
+
+/* Effects */
+--backdrop-blur: blur(8px);
+--shadow-card-feature: 0 8px 16px rgba(0, 0, 0, 0.3);
+--shadow-card-feature-icon: 0 12px 24px rgba(0, 0, 0, 0.4);
+--shadow-focus: 0 0 0 4px color-mix(in srgb, var(--master-accent-primary) 25%, transparent);
+--shadow-focus-error: 0 0 0 4px color-mix(in srgb, var(--color-error) 25%, transparent);
+```
+
+### Icon & Form Sizing
+
+```css
+/* Icon Sizes */
+--icon-size-sm: 16px;
+--icon-size-md: 24px;
+--icon-size-lg: 32px;
+--icon-size-xl: 48px;
+--icon-size-xxl: 64px;
+
+/* Focus States */
+--outline-width-focus: 2px;
+--outline-offset-focus: 2px;
+
+/* Form Elements */
+--input-height: 3.4375rem; /* 55px */
+--textarea-min-height: 9.375rem; /* 150px */
+--textarea-max-height: 15.625rem; /* 250px */
+--form-max-width: 25rem; /* 400px */
+--form-min-width: 20rem; /* 320px */
+
+/* Badges & Indicators */
+--badge-max-width-lg: 12.5rem; /* 200px */
+--badge-max-width-md: 8.75rem; /* 140px */
+--indicator-size-sm: 0.375rem; /* 6px */
+```
+
+### Breakpoints (Documentation Only)
+
+```css
+--breakpoint-mobile: 600px;
+--breakpoint-tablet: 768px;
+--breakpoint-tablet-lg: 900px;
+--breakpoint-desktop: 1024px;
+```
+
+---
+
+## Common Implementation Patterns
+
+### Using Components Together
+
+```typescript
+import { ButtonPrimary, Card, SectionTitle } from '@/components';
+
+export default function ProductsPage() {
+  return (
+    <div className="ds-page-container">
+      <SectionTitle title="Featured Products" />
+      
+      <Card hover>
+        <h3>Product Name</h3>
+        <ButtonPrimary text="View Product" url="/product" />
+      </Card>
+    </div>
+  );
+}
+```
+
+Then add CSS:
+```css
+.ds-page-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--container-padding);
+}
+
+@media (max-width: 600px) {
+  .ds-page-container {
+    padding: var(--container-padding-mobile);
+  }
+}
+```
+
+### Using Design Tokens in Styles
+
+```css
+.ds-component {
+  /* Use design tokens ONLY */
+  color: var(--color-text-default);
+  padding: var(--space-xl);
+  border-radius: var(--radius-md);
+  background: var(--frosted-glass-bg);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-semibold);
+}
+
+/* Mobile responsive - EQUALLY IMPORTANT */
+@media (max-width: 600px) {
+  .ds-component {
+    padding: var(--space-lg);
+    font-size: var(--fs-h3);
+  }
+}
+
+/* Touch device support */
+@media (hover: none), (pointer: coarse) {
+  .ds-component:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+```
+
+### Mask Overlay Pattern (Mobile)
+
+When applying fade-out masks to backgrounds on mobile, use `var(--color-black)` for opaque areas and `transparent` for faded areas.
+
+```css
+/* ✅ GOOD */
+mask-image: radial-gradient(ellipse at center, var(--color-black) 0%, transparent 90%);
+
+/* ❌ BAD */
+mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 90%);
+```
+
+---
+
+## Component Composition Rules
+
+### When to Create New Components
+
+These are **guidelines**, not strict laws.
+
+✅ **Create new component when:**
+- Reusable UI pattern appears 3+ times
+- Complex interaction logic needed
+- Standalone feature with multiple parts
+- **Section Components:** Large page sections (Hero, Features) should be their own components
+
+❌ **Don't create component when:**
+- Used only once (inline JSX is fine for unique layouts)
+- Simple HTML structure
+- Better as inline JSX
+
+**Flexibility Clause:**
+For one-off unique pages (like a campaign landing page), you may compose layouts inline without creating reusable components for every section, **provided you strictly use design tokens and base components**.
+
+### Component Import Pattern
+
+```typescript
+// ✅ GOOD - Import from barrel export
+import { ButtonPrimary, Card } from '@/components';
+
+// ❌ BAD - Individual imports
+import ButtonPrimary from '@/components/ButtonPrimary';
+import Card from '@/components/Card';
+```
+
+### Section Component Pattern
+
+For complex pages (like Media Kit), build specific section components that accept data props:
+
+```typescript
+// components/MySection.tsx
+interface MySectionProps {
+  title?: string;
+  items: Item[];
+}
+
+export default function MySection({ title, items }: MySectionProps) {
+  return (
+    <SectionParallax className="ds-my-section" gridSpeed={0.5}>
+      <div className="ds-my-section-container">
+        <SectionTitle>{title}</SectionTitle>
+        {/* Render items */}
+      </div>
+    </SectionParallax>
+  );
+}
+```
+
+### Media Kit Page Pattern (Reference Implementation)
+
+The Media Kit page (`app/media-kit/page.tsx`) demonstrates the complete pattern for complex landing pages:
+
+```typescript
+// app/media-kit/page.tsx
+import MediaKitHero from '@/components/MediaKitHero'
+import MediaKitLogos from '@/components/MediaKitLogos'
+import MediaKitDemographics from '@/components/MediaKitDemographics'
+import MediaKitCaseStudies from '@/components/MediaKitCaseStudies'
+import MediaKitPricing from '@/components/MediaKitPricing'
+import MediaKitAboutV2 from '@/components/MediaKitAboutV2'
+import MediaKitAvailability from '@/components/MediaKitAvailability'
+import MediaKitFAQ from '@/components/MediaKitFAQ'
+import MediaKitContact from '@/components/MediaKitContact'
+import { BackToTop } from '@/components'
+
+export default function MediaKitPage() {
+  return (
+    <div className="ds-default-background">
+      <MediaKitHero 
+        primaryButtonText="Partnership Plans"
+        primaryButtonLink="#pricing-section"
+        secondaryButtonText="See Case Studies"
+        secondaryButtonLink="#results-section"
+      />
+      <MediaKitLogos logos={sampleLogos} />
+      <MediaKitDemographics buttonLink="#results-section" />
+      <MediaKitCaseStudies caseStudies={sampleCaseStudies} />
+      <MediaKitPricing packages={samplePricingPackages} />
+      <div id="about-section">
+        <MediaKitAboutV2 {...sampleAboutData} />
+      </div>
+      <div id="availability-section">
+        <MediaKitAvailability months={sampleAvailabilityMonths} />
+      </div>
+      <div id="faq-section">
+        <MediaKitFAQ faqs={sampleFAQs} />
+      </div>
+      <MediaKitContact />
+      <BackToTop />
+    </div>
+  )
+}
+```
+
+**Key Patterns:**
+- **Wrapper:** `ds-default-background` for brand gradient
+- **Section Components:** Each section is a self-contained component with props
+- **Anchor Links:** Use `id` attributes for smooth scrolling (`#pricing-section`)
+- **Data Structure:** Pass structured data objects to components
+- **Composition:** Compose complex pages from simple, reusable section components
+
+---
+
+## Layouts & Backgrounds
+
+### Background Patterns (Optional Tools)
+
+Use these utility classes when they fit your design:
+
+*   **`ds-default-background`**: Great for landing pages needing the brand's radial gradient.
+*   **`ds-page-container`**: Standard constraint for text/content pages.
+*   **`ds-grid-overlay`**: Adds a subtle grid effect behind content (used in Showcases).
+
+### Parallax Wrapper (Enhancement)
+
+Use `SectionParallax` to add scroll-based grid movement. **This is an optional enhancement**, not a requirement for every section.
+
+```typescript
+<SectionParallax gridSpeed={0.5} id="section-id">
+  {/* Content floats over moving grid */}
+</SectionParallax>
+```
+
+---
+
+## Responsive Design Approach
+
+**Desktop and Mobile Equally Important:**
+- Base styles designed for desktop (1024px+)
+- Comprehensive mobile styles in `@media (max-width: 600px)`
+- Both desktop and mobile fully designed and polished
+- Touch device support: `@media (hover: none), (pointer: coarse)`
+
+**Breakpoints:**
+- Mobile: < 600px (375px, 414px)
+- Tablet: 600px - 1023px (768px)
+- Desktop: ≥ 1024px (1024px, 1440px, 1920px)
+
+---
+
+## TypeScript Integration
+
+### Shared Types
+
+Use types from `components/types.ts`:
+
+```typescript
+import type { Size, Variant, Alignment } from '@/components/types';
+
+interface MyComponentProps {
+  size?: Size; // 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
+  variant?: Variant; // 'primary' | 'secondary' | 'success' | etc.
+  align?: Alignment; // 'left' | 'center' | 'right'
+}
+```
+
+---
+
+## File Structure Reference
+
+```
+components/
+  ├── index.ts           # Barrel exports (ALL components)
+  ├── types.ts           # Shared TypeScript types
+  ├── components.css     # ALL component styles (organized by category)
+  └── [Component].tsx    # Individual components
+
+hooks/
+  ├── useScrollAnimation.ts
+  ├── useCountUp.ts
+  ├── useParallax.ts
+  └── useResponsive.ts
+
+lib/
+  ├── shopify.ts         # Shopify Storefront API client
+  ├── queries.ts         # GraphQL queries
+  ├── animations.ts      # Animation utilities
+  ├── countUpAnimation.ts # Count-up animation script
+  └── designPatterns.ts  # Design pattern utilities
+
+app/
+  ├── tokens.css         # Design tokens (CSS variables) ⭐ SOURCE OF TRUTH
+  ├── layout.tsx         # Root layout (loads tokens.css and components.css)
+  └── [page]/page.tsx    # Next.js pages
+```
+
+---
+
+## Quick Reference
+
+### Import Components
+```typescript
+import { ButtonPrimary, Card } from '@/components';
+```
+
+### Use Design Tokens
+```css
+color: var(--color-primary);
+padding: var(--space-xl);
+font-size: var(--fs-h2);
+```
+
+### Responsive Pattern
+```css
+/* Desktop base styles */
+.ds-component {
+  padding: var(--space-xl);
+}
+
+/* Mobile styles (equally important) */
+@media (max-width: 600px) {
+  .ds-component {
+    padding: var(--space-lg);
+  }
+}
+```
+
+---
+
+## Anti-Patterns to Avoid
+
+❌ **Inline styles (FORBIDDEN):**
+```typescript
+// WRONG - Inline styles are NEVER allowed
+<div style={{ color: '#365ca4', padding: '24px' }}>
+<div style={{ color: 'var(--color-primary)', padding: 'var(--space-md)' }}>  // Even with tokens!
+```
+
+✅ **CSS classes with tokens:**
+```typescript
+// CORRECT
+<div className="ds-component-name">
+```
+
+```css
+.ds-component-name {
+  color: var(--color-primary);
+  padding: var(--space-md);
+}
+```
+
+❌ **Hardcoding values in CSS:**
+```css
+/* WRONG */
+.ds-component {
+  color: #365ca4;
+  padding: 24px;
+}
+```
+
+✅ **Using tokens in CSS:**
+```css
+/* CORRECT */
+.ds-component {
+  color: var(--color-primary);
+  padding: var(--space-md);
+}
+```
+
+❌ **Creating custom buttons:**
+```typescript
+<button className="custom-button">Click</button>
+```
+
+✅ **Using components:**
+```typescript
+<ButtonPrimary text="Click" url="/page" />
+```
+
+❌ **No mobile styles:**
+```css
+.component { padding: var(--space-xl); }
+```
+
+✅ **Mobile included:**
+```css
+.component { padding: var(--space-xl); }
+@media (max-width: 600px) {
+  .component { padding: var(--space-lg); }
+}
+```
+
+---
+
+## Keeping This Up to Date
+
+When making changes to the codebase:
+- **Adding new tokens**: Update `app/tokens.css` and document in this file
+- **Adding/removing components**: Update `components/index.ts` and `cursor-rules.mdc` component list
+- **Changing file structure**: Update the File Structure Reference section above
+- **Optimizing hardcoded values**: Always replace with design tokens - see Media Kit page for reference
+
+## Media Kit Page Reference
+
+The Media Kit page (`app/media-kit/page.tsx`) serves as the **reference implementation** for:
+- ✅ Complex landing page structure
+- ✅ Section component composition
+- ✅ Data-driven component props
+- ✅ Anchor link navigation
+- ✅ Complete token usage (no hardcoded values)
+- ✅ Responsive design patterns
+
+**All MediaKit components** (`MediaKitHero`, `MediaKitLogos`, `MediaKitDemographics`, etc.) demonstrate:
+- Proper use of design tokens
+- No inline styles
+- Mobile-responsive patterns
+- TypeScript interfaces
+- Component composition

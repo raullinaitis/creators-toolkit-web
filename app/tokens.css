@@ -1,0 +1,549 @@
+/*=============================================
+=    DESIGN SYSTEM TOKENS V3 - Next.js Version  =
+=============================================*/
+
+/* ============================================
+   DESIGN TOKEN HIERARCHY & OVERRIDE SYSTEM
+   
+   🎯 3-LEVEL TOKEN HIERARCHY:
+   Level 1: Master Tokens (Source of Truth)
+     ↓
+   Level 2: Semantic Tokens (Contextual Meaning)
+     ↓
+   Level 3: Contextual Tokens (Specific Usage)
+   
+   📝 NOTE: This file is imported in Next.js via:
+   import '@/app/tokens.css'
+   ============================================ */
+
+/* -- 🎯 GLOBAL RESET -- */
+html {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* Reset button font-weight to normal (browsers default to bold) */
+button {
+  font-weight: var(--fw-normal);
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--master-bg-dark);
+  position: relative;
+  font-family: var(--font-body-family);
+  color: var(--color-text-default);
+  line-height: var(--lh-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Grid Pattern - Removed from body, now section-based */
+body::before {
+  display: none;
+}
+
+body::after {
+  display: none;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+:root {
+  /* ============================================
+     🎨 LEVEL 1: MASTER COLOR CONTROLS
+     These are the source of truth for all colors
+     ============================================ */
+  
+  --master-accent-primary: #2563eb;          /* Primary brand color */
+  --master-accent-secondary: #5bafd1;         /* Secondary brand color */
+  --master-bg-dark: #000000;                  /* Main page background */
+  --master-bg-surface: #00101F;               /* Card and surface backgrounds */
+  --master-bg-surface-elevated: #111827;
+  --master-bg-accent: #4b5563;               /* Background overlay color (separate from primary) */
+  
+  /* Background gradient colors for diagonal wash */
+  --bg-dark: #000000;
+  --bg-mid: #000000;
+  --bg-end: #000000;
+  
+  /* Opacity Controls */
+  --border-opacity: 0.25;                        /* Card Border Opacity (0-1 where 1 = 100%) */
+  --card-bg-opacity: 50;                      /* Card Background Opacity (0-100) */
+  
+  /* Unified Line/Border Tokens - Controls grid lines, card borders, and form inputs */
+  --line-color-base-rgb: 75, 85, 99;              /* RGB values matching bg accent color (#4b5563) */
+  --line-opacity: 0.2;                           /* Unified opacity for all lines/borders (0-1 where 1 = 100%) */
+  --line-width: 2px;                             /* Unified width for all lines/borders */
+  --line-color: rgba(var(--line-color-base-rgb), var(--line-opacity)); /* Computed line color with opacity */
+
+  /* ============================================
+     🎨 LEVEL 2: SEMANTIC COLOR MAPPINGS
+     These reference the master colors above
+     ============================================ */
+  
+  /* Primary Palette */
+  --color-primary: var(--master-accent-primary);
+  --color-secondary: var(--master-accent-secondary);
+  --color-primary-light: color-mix(in srgb, var(--master-accent-primary) 70%, white);
+  --color-secondary-light: color-mix(in srgb, var(--master-accent-secondary) 70%, white);
+  --color-accent-cyan: var(--master-accent-primary);
+
+  /* Feedback Palette */
+  --color-success: #10b981;
+  --color-success-bg: #103e26;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-error-bg: #3e1010;
+
+  /* Text Colors */
+  --color-text-default: #e5e5e5;
+  --color-text-subtle: #d1d5db;
+  --color-text-muted: #d1d5db;
+  --color-text-badge-secondary: color-mix(in srgb, var(--master-accent-secondary) 80%, white);
+  --color-text-badge-accent: color-mix(in srgb, var(--master-accent-primary) 80%, white);
+  --color-text-button-primary: #e5e5e5;
+  
+  /* UI Effects */
+  --color-shimmer: rgba(255, 255, 255, 0.15);
+
+  /* Gradients - Color-based gradients */
+  --gradient-primary: linear-gradient(135deg, var(--master-accent-primary), var(--master-accent-secondary));
+  --gradient-text: linear-gradient(to bottom, var(--master-accent-primary), var(--master-accent-secondary));
+  --gradient-card: color-mix(in srgb, var(--master-bg-surface) var(--card-bg-opacity, 60%), transparent);
+  --gradient-featured: color-mix(in srgb, var(--master-bg-surface) 80%, transparent);
+  --gradient-sale: #dc2626;
+
+  /* ============================================
+     🎨 LEVEL 3: CONTEXTUAL USAGE TOKENS
+     These auto-generate from semantic colors
+     ============================================ */
+  
+  /* Backgrounds */
+  --color-background-base: var(--master-bg-dark);
+  --color-background-minimal: color-mix(in srgb, var(--master-bg-surface) 60%, transparent);
+  --color-background-section: color-mix(in srgb, var(--master-bg-accent) 20%, transparent); /* Section background overlay */
+  --color-background-badge-secondary: color-mix(in srgb, var(--master-accent-secondary) 20%, transparent);
+  --color-background-badge-accent: color-mix(in srgb, var(--master-accent-primary) 20%, transparent);
+  --color-background-badge-success: rgba(16, 185, 129, 0.2);
+  
+  /* Frosted Glass Card Settings */
+  --frosted-glass-opacity: 50%;
+  --frosted-glass-blur: 12px;
+  --frosted-glass-bg: rgba(0, 16, 31, 0.8);
+  --backdrop-blur-sm: 5px;
+  
+  /* Background Patterns */
+  /* Grid Pattern - Subtle white grid overlay */
+  --background-grid-pattern:
+    linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px);
+  --background-grid-size: 50px 50px;
+  --background-grid-position: center;
+  
+  /* Primary Accent Grid Pattern - Site background grid */
+  --background-grid-accent-pattern:
+    linear-gradient(90deg, rgba(107, 107, 107, 0.5) 1px, transparent 1px),
+    linear-gradient(rgba(107, 107, 107, 0.5) 1px, transparent 1px);
+  --background-grid-accent-size: 40px 40px;
+  --background-grid-radial-mask: radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 70%);
+  --background-gradient-diagonal: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-mid) 30%, var(--bg-end) 100%);
+  
+  /* Glow Colors - Used in radial gradients and overlays */
+  
+  /* Radial Gradient Background - Dark section backdrop */
+  --background-radial-gradient: radial-gradient(ellipse at center, rgba(10, 10, 26, 0.9) 0%, var(--master-bg-dark) 100%);
+  --background-radial-gradient-mobile: radial-gradient(ellipse at center, rgba(10, 10, 26, 0.9) 0%, rgba(10, 10, 26, 0.7) 60%, var(--master-bg-dark) 100%);
+  
+  /* Grid Mask - Fades grid at edges */
+  --background-grid-mask: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 75%);
+  --background-grid-mask-mobile: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 90%);
+  
+  /* Borders */
+  --color-border-default: rgb(55, 65, 81);
+  --color-border-interactive: var(--master-accent-primary);
+  --color-border-featured: var(--master-accent-primary);
+  --color-border-badge-secondary: var(--master-accent-secondary);
+  --color-border-badge-accent: var(--master-accent-primary);
+  --color-border-badge-success: rgb(52, 211, 153);
+  --color-border-light: rgba(255, 255, 255, 0.1);
+
+  /* Section Backgrounds */
+  --gradient-bg-top-left: transparent;
+  --gradient-bg-top-right: transparent;
+  --gradient-bg-center: transparent;
+  --color-bg-surface: rgba(11, 19, 43, 0.75);
+  --color-bg-flat: var(--master-bg-dark);
+  --color-bg-overlay: rgba(17, 24, 39, 0.5);
+  --overlay-bg-25: rgba(0, 0, 0, 0.25);
+  --overlay-bg-50: rgba(0, 0, 0, 0.5);
+  --overlay-bg-80: rgba(0, 0, 0, 0.8);
+  --overlay-bg-95: rgba(0, 0, 0, 0.95);
+  --card-input-overlay: rgba(0, 0, 0, 0.15);
+  --color-black: #000;
+  --color-white: #ffffff;
+
+  /* ============================================
+     ✒️ TYPOGRAPHY SYSTEM
+     ============================================ */
+
+  --font-body: var(--font-outfit, 'Outfit'), sans-serif;
+  --font-display: var(--font-outfit, 'Outfit'), sans-serif;
+  --font-display-family: var(--font-display);
+  --font-body-family: var(--font-body);
+
+  /* Font Sizes - Responsive with clamp() */
+  --fs-h1: clamp(2.5rem, 4vw + 0.5rem, 3.5rem);     /* 40px mobile → 56px desktop - More contrast for main title */
+  --fs-h2: clamp(2rem, 3.5vw + 0.5rem, 2.75rem);   /* 32px mobile → 44px desktop - Keeps hierarchy clear */
+  --fs-h3: clamp(1.5rem, 2.5vw + 0.5rem, 2rem);     /* 24px mobile → 32px desktop - Bridges gap between H2 and body */
+  --fs-h4: clamp(1.25rem, 1.25vw + 0.875rem, 1.5rem); /* 20px mobile → 24px desktop - Now distinct from Body text */
+  --fs-lead: clamp(1.125rem, 0.625vw + 0.875rem, 1.25rem); /* 18px → 20px - Distinct, but subtle */
+  --fs-subheadline: clamp(1.125rem, 0.625vw + 0.875rem, 1.25rem); /* 18px → 20px */
+  --fs-body: clamp(1rem, 0.625vw + 0.875rem, 1.125rem); /* 16px → 18px - Standard readable baseline */
+  --fs-sm: 0.875rem;                          /* 14px - Good for meta data */
+  --fs-caption: 0.75rem;                      /* 12px - Use with UPPERCASE transform */
+
+  /* Font Weights */
+  --fw-light: 300;
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+  --fw-h1: var(--fw-semibold);                  /* 600 - Commands attention via size, 700+ can look "toylike" at 3.5rem */
+  --fw-h2: var(--fw-semibold);                  /* 600 - Maintains the elegance of H1 */
+  --fw-h3: var(--fw-semibold);                  /* 600 - Consistent header language */
+  --fw-h4: var(--fw-bold);                      /* 700 - Critical: H4 (1.25rem) is close to Body (1rem), needs weight for contrast */
+  --fw-lead: var(--fw-normal);                  /* 400 - Let the size difference do the work, keep it airy */
+  --fw-body: var(--fw-normal);                  /* 400 - Standard readability, never go lighter (300) for body text */
+  --fw-sm: var(--fw-normal);                   /* 400 - Same as body, just scaled down */
+  --fw-caption: var(--fw-semibold);             /* 600 - Crucial: At 0.75rem, thin lines vanish on screens. Need thickness + UPPERCASE */
+  
+  --lh-tight: 1.2;
+  --lh-normal: 1.6;
+  --lh-loose: 1.65;
+  --lh-h1: 1.15;
+  --lh-h2: 1.2;
+  --lh-h3: 1.3;
+  --lh-h4: 1.35;
+  --lh-lead: 1.6;
+  --lh-body: 1.6;
+  --lh-caption: 1.4;
+  
+  --letter-spacing-wide: 0.05em;
+  --ls-h1: 0em;
+  --ls-h2: 0em;
+  --ls-h3: 0em;
+  --ls-h4: 0em;
+  --ls-lead: 0em;
+  --ls-body: 0em;
+  --ls-caption: 0.02em;
+
+  /* Typography – Text Transform Per Level */
+  --tt-h1: none;
+  --tt-h2: none;
+  --tt-h3: none;
+  --tt-h4: none;
+  --tt-lead: none;
+  --tt-body: none;
+  --tt-caption: uppercase;                    /* UPPERCASE for caption text */
+
+  /* Typography Level Colors */
+  --color-h1: var(--color-text-default);
+  --color-h2: var(--color-text-default);
+  --color-h3: var(--color-text-default);
+  --color-h4: var(--color-text-default);
+  --color-lead: var(--color-text-subtle);
+  --color-body: var(--color-text-default);
+  --color-caption: var(--color-text-muted);
+
+  /* ============================================
+     📏 SPACING & LAYOUT
+     ============================================ */
+
+  /* Base Spacing Scale */
+  --space-xs: 0.5rem; /* 8px */
+  --space-sm: 1rem; /* 16px */
+  --space-md: 1.5rem; /* 24px */
+  --space-lg: 2rem; /* 32px */
+  --space-xl: 2.5rem; /* 40px */
+  --space-2xl: 3rem; /* 48px */
+  --space-3xl: 3.5rem; /* 56px */
+  --space-xxl: 4rem; /* 64px */
+  --space-btn-y-sm: 0.75rem;
+
+  /* Container & Layout */
+  --container-padding: 3rem 1rem;
+  --container-padding-mobile: 2rem 0.75rem;
+  --container-padding-mobile-horizontal: 0.75rem;
+  --container-padding-horizontal: 1rem;
+  --container-max-width: 75rem;
+  --container-max-width-narrow: 50rem;
+  --card-flex-basis: 17.5rem;
+  --card-max-width-sm: 25rem;
+  --card-max-width-md: 22.5rem;
+  --aspect-ratio-product: 4 / 3;
+
+  /* Section Spacing - Standardized for MediaKit sections */
+  --section-padding-top: calc(var(--space-xxl) * 2); /* 8rem (128px) - generous breathing room */
+  --section-padding-bottom: calc(var(--space-xxl) * 2); /* 8rem (128px) */
+  --section-container-padding: var(--space-lg); /* 2rem - horizontal padding */
+  --section-container-max-width: var(--container-max-width); /* 75rem */
+  
+  /* Mobile Section Spacing */
+  --section-padding-top-mobile: calc(var(--space-xl) * 2); /* 5rem (80px) - generous breathing room */
+  --section-container-padding-mobile: var(--space-md); /* 1.5rem */
+
+  /* Grid Gaps */
+  --gap-row: var(--space-md);
+  --gap-col: var(--space-md);
+
+  /* ============================================
+     🔲 BORDERS & CARDS
+     ============================================ */
+
+  /* Border Radius */
+  --radius-sm: 1.5rem; /* 24px */
+  --radius-md: 2rem; /* 32px */
+  --radius-lg: 2.5rem; /* 40px */
+  --radius-full: 9999px;
+
+  /* Border Widths */
+  --border-width-default: 1px;
+  --border-width-md: 2px;
+  --border-width-card: 2px;
+  --border-width-accent: 4px;
+  --border-width-thick: 4px;
+  
+  /* Card Outline Width - Controls border and outline padding for all cards */
+  --card-outline-width: var(--line-width);
+
+  /* ============================================
+     ⏱️ ANIMATION TIMING
+     ============================================ */
+  
+  --duration-instant: 100ms;
+  --duration-fast: 250ms;
+  --duration-base: 500ms;
+  --duration-slow: 700ms;
+  --duration-chart-animation: 2500ms;
+  --duration-bar-animation: 1500ms;
+  
+  /* Animation Delays */
+  --delay-card-stagger-1: 0ms;
+  --delay-card-stagger-2: 100ms;
+  --delay-card-stagger-3: 200ms;
+  --delay-bar-stagger: 100ms;
+  
+  /* Opacity Values */
+  --opacity-logo-image: 0.9;
+  --opacity-text-subtle: 0.75;
+  --opacity-text-muted: 0.9;
+  --opacity-mask-opaque: 1;
+  --opacity-mask-mid: 0.5;
+  --opacity-mask-transparent: 0;
+
+  /* ============================================
+     🎢 ANIMATION EASING
+     ============================================ */
+  
+  --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ============================================
+     ✨ EFFECTS & TRANSITIONS
+     ============================================ */
+  
+  /* Shadow Effects */
+  --shadow-card-feature: 0 8px 16px rgba(0, 0, 0, 0.3);
+  --shadow-card-feature-icon: 0 12px 24px rgba(0, 0, 0, 0.4);
+  --shadow-focus: 0 0 0 4px color-mix(in srgb, var(--master-accent-primary) 25%, transparent);
+  --shadow-focus-error: 0 0 0 4px color-mix(in srgb, var(--color-error) 25%, transparent);
+
+  /* ============================================
+     🎯 ICON & INDICATOR SIZING
+     ============================================ */
+  --icon-size-sm: 16px;
+  --icon-size-md: 24px;
+  --icon-size-lg: 32px;
+  --icon-size-xl: 48px;
+  --icon-size-xxl: 64px;
+
+  /* ============================================
+     🎯 INTERACTION & FORM TOKENS
+     ============================================ */
+
+  /* Focus States */
+  --outline-width-focus: 2px;
+  --outline-offset-focus: 2px;
+
+  /* Form Elements */
+  --input-height: 3.4375rem; /* 55px */
+  --textarea-min-height: 9.375rem; /* 150px */
+  --textarea-max-height: 15.625rem; /* 250px */
+  --form-max-width: 25rem; /* 400px */
+  --form-min-width: 20rem; /* 320px */
+
+  /* Badges & Indicators */
+  --badge-max-width-lg: 12.5rem; /* 200px */
+  --badge-max-width-md: 8.75rem; /* 140px */
+  --indicator-size-sm: 0.375rem; /* 6px */
+
+  /* ============================================
+     🎯 ANIMATION & TRANSFORMS
+     ============================================ */
+  --transform-translate-y-menu: -10px;
+  --transform-translate-y-menu-offset: 10px;
+  --transform-lift: -4px;
+  --transform-scale-active: 0.98;
+
+  /* ============================================
+     🎯 GLOW SHADOWS FOR INTERACTIVE ELEMENTS
+     ============================================ */
+  --shadow-glow: 0 4px 12px color-mix(in srgb, var(--master-accent-primary) 20%, transparent);
+  --shadow-glow-hover: 0 8px 24px color-mix(in srgb, var(--master-accent-primary) 30%, transparent);
+
+  /* ============================================
+     🎯 COMPONENT SPECIFIC SIZES
+     ============================================ */
+  --select-menu-max-height: 18.75rem; /* 300px */
+  --card-simple-border-width: 3px;
+  --alert-close-size: var(--icon-size-md); /* 24px */
+  --alert-close-icon-size: 14px;
+  --tooltip-arrow-size: 8px;
+  --spinner-stroke-width-sm: 2px;
+  --spinner-stroke-width-lg: 3px;
+  --social-button-size-sm: var(--icon-size-lg); /* 32px */
+  --social-button-size-md: 40px;
+  --social-button-size-lg: var(--icon-size-xl); /* 48px */
+  --social-icon-size-sm: var(--icon-size-sm); /* 16px */
+  --social-icon-size-md: 20px;
+  --social-icon-size-lg: var(--icon-size-md); /* 24px */
+  --scroll-indicator-width: 30px;
+  --scroll-indicator-height: 50px;
+  --scroll-indicator-border-width: var(--border-width-md); /* 2px */
+  --scroll-indicator-border-radius: 15px;
+  --scroll-indicator-dot-top: 8px;
+  --scroll-indicator-dot-width: 4px;
+  --scroll-indicator-dot-height: var(--space-xs); /* 8px */
+  --scroll-indicator-dot-radius: 2px;
+  --demographics-chart-height: 12.5rem; /* 200px */
+  --case-study-image-aspect: 140%;
+  --popular-badge-offset-top: -12px;
+  --social-button-size: 56px;
+  --contact-textarea-min-height: var(--textarea-min-height); /* 150px */
+  --showcase-swatch-height: 6.25rem; /* 100px */
+  --showcase-blockquote-max-width: 50rem; /* 800px */
+
+  /* ============================================
+     🎯 SHADOW VALUES
+     ============================================ */
+  --shadow-card-featured-offset-y: 15px;
+  --shadow-card-featured-blur: 30px;
+  --shadow-card-featured-spread: -10px;
+  --shadow-badge-offset-y: 15px;
+  --shadow-badge-blur: 30px;
+  --shadow-badge-spread: -10px;
+
+  /* Breakpoints (Documentation Only) */
+  --breakpoint-mobile: 600px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-tablet-lg: 900px;
+  --breakpoint-desktop: 1024px;
+}
+
+/* ============================================
+   🎨 BACKGROUND PATTERN UTILITY CLASSES
+   Use these classes to apply default grid and gradient backgrounds
+   ============================================ */
+
+/* Default Section Background - Radial gradient with grid overlay */
+.ds-default-background {
+  background: transparent;
+  position: relative;
+}
+
+.ds-default-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ds-default-background > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Mobile variant - stronger backdrop */
+@media (max-width: 600px) {
+  .ds-default-background {
+    background: transparent;
+  }
+  
+  .ds-default-background::before {
+    /* Grid pattern removed - keeping only background positioning */
+  }
+}
+
+/* ============================================
+   🎬 ANIMATION KEYFRAMES
+   ============================================ */
+
+/* Spinner rotation animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Bar fill animation for demographics */
+@keyframes bar-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--fill-width, 100%);
+  }
+}
+
+/* Fade in and slide up animation */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+

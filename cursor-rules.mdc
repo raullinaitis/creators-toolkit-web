@@ -1,0 +1,607 @@
+---
+alwaysApply: true
+---
+## ⚠️ The Pre-Flight Check: The Most Important Rule
+
+Before you write or modify ANY code, you must first determine the risk level of my request.
+
+**Low Risk:**
+* Creating a **new** component in `components/` folder
+* Creating a **new** page in `app/` folder
+* Creating a **new** utility function in `lib/` folder
+* Creating a **new** hook in `hooks/` folder
+
+If the task is low risk, you can proceed immediately.
+
+**High Risk:**
+* Modifying an **existing** component that's used across multiple pages
+* Modifying the global **`app/tokens.css`** file (design tokens)
+* Modifying the **`app/layout.tsx`** file (global layout)
+* Modifying **`components/components.css`** (shared component styles)
+* Modifying any **core system files** (Shopify client, hooks, utilities)
+
+If the task is **high risk**, you must **STOP** and reply with a warning first. The warning must explain the potential impact (e.g., "Warning: Changing this design token may affect all 40 components that use it.") and then ask for my explicit confirmation ("Are you sure you want to proceed?").
+
+**Do not write or apply any code for a high-risk task until I reply with "Yes, proceed" or a similar confirmation.**
+
+---
+
+## 🚨 CRITICAL RULE: NO INLINE STYLES - EVER
+
+**ABSOLUTE RULE:** NEVER use inline `style={{}}` props in React components. ALL styling MUST go in CSS classes in `components/components.css`.
+
+### ❌ FORBIDDEN - These will be rejected:
+
+```typescript
+// WRONG - Inline styles with hardcoded values
+<div style={{ padding: '24px', color: '#fff', marginBottom: '16px' }}>
+
+// WRONG - Inline styles even WITH design tokens
+<div style={{ padding: 'var(--space-xl)', color: 'var(--color-text-default)' }}>
+
+// WRONG - Any inline style prop
+<div style={{ display: 'flex', gap: '16px' }}>
+<section style={{ marginBottom: 'var(--space-xxl)' }}>
+```
+
+### ✅ REQUIRED - Use CSS classes only:
+
+```typescript
+// CORRECT - Use className, no inline styles
+<div className="ds-component-name">
+<section className="ds-section">
+```
+
+Then add ALL styles to `components/components.css`:
+
+```css
+.ds-component-name {
+  padding: var(--space-md);
+  color: var(--color-text-default);
+  margin-bottom: var(--space-sm);
+  display: flex;
+  gap: var(--space-md);
+}
+
+.ds-section {
+  margin-bottom: var(--space-xxl);
+}
+```
+
+### Exception (ONLY this one):
+
+SVG gradient definitions are allowed because CSS cannot target SVG `<stop>` elements:
+
+```typescript
+// ✅ ALLOWED - Only for SVG gradient stops
+<stop offset="0%" style={{ stopColor: 'var(--master-accent-primary)', stopOpacity: 1 }} />
+```
+
+**Everything else MUST be in CSS classes.**
+
+---
+
+# Cursor Rules: Headless Shopify Design System
+
+## Philosophy
+Each component is self-contained and reusable. Components use global Design System tokens for styling and do not depend on other components' internal styles. All components follow TypeScript best practices and are fully responsive. **ALL styling is done via CSS classes - NO inline styles.**
+
+---
+
+## The Master Component Template
+Every new component Cursor creates must follow this exact structure.
+
+```typescript
+/**
+ * ComponentName Component
+ * Brief description of what this component does
+ * 
+ * Converted from Liquid snippet: ds-component-name.liquid (if applicable)
+ */
+
+'use client'; // Only if component needs interactivity or hooks
+
+import { useState } from 'react'; // Only import what you need
+
+interface ComponentNameProps {
+  // Props matching original Liquid parameters
+  title: string;
+  description?: string;
+  className?: string;
+}
+
+export default function ComponentName({
+  title,
+  description,
+  className = '',
+}: ComponentNameProps) {
+  // Component logic here
+ 
+  return (
+    <div className={`ds-component-name ${className}`}>
+      <h2 className="component-title">{title}</h2>
+      {description && <p className="component-description">{description}</p>}
+    </div>
+  );
+}
+```
+
+**Then add styles to `components/components.css`:**
+
+```css
+/* Component Name Styles */
+.ds-component-name {
+  /* Use design tokens ONLY - no hardcoded values */
+  padding: var(--space-xl);
+  background: var(--frosted-glass-bg);
+  border-radius: var(--radius-md);
+  color: var(--color-text-default);
+}
+
+.ds-component-name .component-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-semibold);
+  color: var(--color-h2);
+  margin: 0 0 var(--space-md) 0;
+}
+
+/* Mobile responsive - EQUALLY IMPORTANT */
+@media (max-width: 600px) {
+  .ds-component-name {
+    padding: var(--space-lg);
+  }
+ 
+  .ds-component-name .component-title {
+    font-size: var(--fs-h3);
+  }
+}
+
+/* Touch device support */
+@media (hover: none), (pointer: coarse) {
+  .ds-component-name:hover {
+    /* Remove hover effects on touch devices */
+  }
+}
+```
+
+---
+
+## Validation Checklist
+Before completing any component, verify:
+- [ ] **NO inline `style={{}}` props** - ALL styling in CSS classes
+- [ ] All colors use design tokens (no hardcoded values like `#ffffff`)
+- [ ] All spacing uses design tokens (no hardcoded `px` values)
+- [ ] CSS classes prefixed with `ds-` (e.g., `ds-component-name`)
+- [ ] Mobile responsive styles included (`@media (max-width: 600px)`)
+- [ ] Touch device support included (`@media (hover: none)`)
+- [ ] TypeScript interfaces defined for all props
+- [ ] Component exported in `components/index.ts`
+- [ ] 'use client' directive only if needed (hooks, interactivity)
+
+---
+
+## Component Usage Rules
+- Always use existing components from `components/` folder
+- Never duplicate button, card, or form HTML
+- Reference `components/index.ts` for available components
+- Import components: `import { ButtonPrimary, Card } from '@/components'`
+
+---
+
+## Required Documentation References
+Always reference these files when creating/modifying components:
+- `app/tokens.css` (design token definitions - THE SOURCE OF TRUTH)
+- `components/types.ts` (shared TypeScript interfaces)
+- `components/components.css` (all component styles)
+- `components/index.ts` (component exports)
+
+---
+
+## Common Anti-Patterns to Avoid
+
+❌ **Inline styles (FORBIDDEN):**
+```typescript
+// WRONG - Inline styles are NEVER allowed
+<div style={{ color: '#365ca4', fontSize: '24px' }}>
+<div style={{ padding: 'var(--space-xl)' }}>  // Even with tokens!
+
+// CORRECT - Use CSS classes
+<div className="ds-component-name">
+```
+
+Then add CSS:
+```css
+.ds-component-name {
+  color: var(--color-primary);
+  font-size: var(--fs-h2);
+  padding: var(--space-xl);
+}
+```
+
+❌ **Hardcoded values in CSS:**
+```css
+/* WRONG */
+.ds-component {
+  color: #365ca4;
+  padding: 24px;
+}
+
+/* CORRECT */
+.ds-component {
+  color: var(--color-primary);
+  padding: var(--space-md);
+}
+```
+
+❌ **Duplicate component HTML:**
+```typescript
+// WRONG - Creating custom button HTML
+<button className="custom-button">Click Me</button>
+
+// CORRECT - Use existing component
+<ButtonPrimary text="Click Me" url="/page" />
+```
+
+❌ **Global CSS classes:**
+```css
+/* WRONG */
+.my-component { ... }
+
+/* CORRECT */
+.ds-my-component { ... }
+```
+
+❌ **Missing mobile styles:**
+```css
+/* WRONG - Desktop only */
+.ds-component { padding: var(--space-xl); }
+
+/* CORRECT - Desktop + Mobile */
+.ds-component { padding: var(--space-xl); }
+@media (max-width: 600px) {
+  .ds-component { padding: var(--space-lg); }
+}
+```
+
+---
+
+## 🛡️ The Non-Negotiables (Strict Consistency)
+
+These rules must **always** be followed because they control the brand identity and code health.
+
+### 1. NO INLINE STYLES - EVER
+**ABSOLUTE RULE:** NEVER use inline `style={{}}` props. ALL styling MUST go in CSS classes in `components/components.css`.
+
+### 2. Use Design Tokens
+NEVER use hardcoded values (like `#FFFFFF` or `16px`). ALWAYS use the CSS variables from `app/tokens.css`.
+
+### 3. Component Prefix
+All component CSS classes must start with `ds-` (e.g., `ds-card`, `ds-button-primary`).
+
+### 4. Desktop and Mobile Equally Important
+Both desktop and mobile receive full design attention. Use `@media (max-width: 600px)` for mobile overrides.
+
+### 5. TypeScript First
+All components must have proper TypeScript interfaces. Use `components/types.ts` for shared types.
+
+---
+
+## 🎨 Flexible Layout Patterns (Adaptable)
+
+Use these patterns as **recommended starting points**. You are free to modify the structure (grid vs flex, full-width vs contained) as long as the **Non-Negotiables** above are respected.
+
+### Recommended Page Blueprints
+
+#### 1. Standard Page Pattern (Default)
+Best for simple content, legal pages, or text-heavy layouts.
+
+```typescript
+// app/simple-page/page.tsx
+import { ButtonPrimary, Card } from '@/components';
+
+export default function SimplePage() {
+  return (
+    <div className="ds-page-container">
+      <h1 className="ds-page-title">
+        Page Title
+      </h1>
+      
+      <Card hover>
+        <h3>Content Block</h3>
+        <ButtonPrimary text="Action" url="/action" />
+      </Card>
+    </div>
+  );
+}
+```
+
+#### 2. Landing Page Pattern (Marketing)
+Common structure for high-impact pages (Media Kits, Sales Pages).
+*   **Typical Use:** Full-width sections stacked vertically.
+*   **Wrapper:** `ds-default-background` (Optional - adds brand gradient).
+
+```typescript
+// app/landing-page/page.tsx
+import HeroSection from '@/components/HeroSection'
+import FeaturesSection from '@/components/FeaturesSection'
+
+export default function LandingPage() {
+  return (
+    <div className="ds-default-background">
+      <HeroSection />
+      <FeaturesSection />
+      {/* Add custom sections as needed */}
+    </div>
+  )
+}
+```
+
+**Reference Implementation:** See `app/media-kit/page.tsx` for a complete example of a complex landing page with multiple sections, data structures, and anchor navigation.
+
+#### 3. Showcase Page Pattern
+Best for component libraries or galleries.
+
+```typescript
+// app/showcase/page.tsx
+import { Card, ButtonPrimary } from '@/components'
+
+export default function ShowcasePage() {
+  return (
+    <div className="ds-page-container">
+      <section className="ds-showcase-section">
+        <h1 className="ds-showcase-title">Component Showcase</h1>
+        
+        <div className="ds-grid-overlay ds-component-wrapper">
+          <Card>
+            <ButtonPrimary text="Demo" />
+          </Card>
+        </div>
+      </section>
+    </div>
+  )
+}
+```
+
+#### 4. Product / Commerce Pattern
+*   **Typical Use:** Product Details, Collections.
+*   **Structure:** Highly variable. Often uses a split layout (Gallery Left + Details Right) on desktop.
+*   **Flexibility:** Feel free to create custom grid layouts (`ds-product-grid`) specific to the collection needs.
+
+---
+
+Then add styles to `components/components.css`:
+
+```css
+.ds-page-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--container-padding);
+}
+
+.ds-page-title {
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-h1);
+  color: var(--color-h1);
+}
+
+@media (max-width: 600px) {
+  .ds-page-container {
+    padding: var(--container-padding-mobile);
+  }
+  
+  .ds-page-title {
+    font-size: var(--fs-h2);
+  }
+}
+```
+
+---
+
+## Shopify Integration
+
+When fetching Shopify data:
+
+```typescript
+// Use Shopify Storefront API
+import { storefrontQuery } from '@/lib/shopify';
+import { GET_PRODUCTS } from '@/lib/queries';
+
+const products = await storefrontQuery(GET_PRODUCTS, { first: 10 });
+```
+
+---
+
+## Accessibility Requirements
+
+- All interactive components must have ARIA labels
+- Keyboard navigation support (Enter, Space, Arrow keys)
+- Focus states visible (`:focus-visible`)
+- Screen reader friendly semantic HTML
+- Respect `prefers-reduced-motion` for animations
+
+---
+
+## Performance Best Practices
+
+- Use Next.js `Image` component for all images
+- Lazy load images (`loading="lazy"`)
+- Use `'use client'` only when necessary (hooks, interactivity)
+- Server components by default (better performance)
+- Optimize bundle size (import only what you need)
+
+---
+
+## File Organization
+
+```
+components/          - All reusable components
+  ├── index.ts      - Barrel exports
+  ├── types.ts      - Shared TypeScript types
+  └── components.css - All component styles
+
+hooks/              - React hooks
+lib/                - Utilities and Shopify client
+app/                - Next.js pages and layouts
+  ├── tokens.css   - Design tokens (CSS variables) ⭐ SOURCE OF TRUTH
+  └── layout.tsx    - Root layout (loads tokens.css and components.css)
+```
+
+---
+
+## Current Component Library
+
+**Available Components** (from `components/index.ts`):
+
+### Buttons
+- `ButtonPrimary` - Main call-to-action (gradient fill)
+- `ButtonSecondary` - Secondary actions (gradient border)
+- `ButtonGhost` - Minimal background buttons
+
+### Cards
+- `Card` - Basic content container
+- `CardSimple` - Simplified card
+- `CardFeature` - Feature card with icon
+- `CardFeatureV2` - Alternative feature card
+- `CardFeatureV3` - Third feature card variant
+- `CardStat` - Stat card with count-up animation
+- `CardStatV2` - Alternative stat card
+- `CardStatV3` - Third stat card variant
+- `CardTestimonial` - Testimonial with quote and author
+- `ProductCard` - E-commerce product card
+
+### Forms
+- `Input` - Text input with validation states
+- `Textarea` - Auto-resize textarea
+- `Select` - Custom styled select dropdown
+- `Checkbox` - Custom checkbox
+- `Toggle` - Toggle switch
+
+### Navigation
+- `NavItem` - Navigation item component
+- `Header` - Site header
+- `NavBar` - Navigation bar
+
+### UI Components
+- `Dropdown` - Dropdown menu with keyboard navigation
+- `Breadcrumb` - Breadcrumb navigation
+- `Alert` - Alert/notification component
+- `Tooltip` - Tooltip with positioning
+- `Skeleton` - Loading skeleton (`type="text|card|image"`)
+- `Spinner` - Loading spinner
+- `Blockquote` - Blockquote with author attribution
+- `SectionTitle` - Section title component
+- `SectionParallax` - Parallax wrapper for sections with grid movement
+- `SocialLinks` - Social media icon links
+- `Divider` - Divider with optional centered text
+- `BackToTop` - Back to top button component
+
+### Media Kit Components
+- `MediaKitAboutV2` - Media kit about section
+- `MediaKitHero` - Media kit hero section
+- `MediaKitLogos` - Media kit logos section
+- `MediaKitDemographics` - Media kit demographics section
+- `MediaKitCaseStudies` - Media kit case studies section
+- `MediaKitPricing` - Media kit pricing section
+- `MediaKitAvailability` - Media kit availability section
+- `MediaKitFAQ` - Media kit FAQ section
+- `MediaKitContact` - Media kit contact section
+
+---
+
+## Testing Checklist
+
+Before marking any component complete:
+- [ ] Works on mobile (600px breakpoint)
+- [ ] Works on tablet (768px breakpoint)
+- [ ] Works on desktop (1024px+)
+- [ ] Keyboard navigation works
+- [ ] Screen reader friendly
+- [ ] Animations respect `prefers-reduced-motion`
+- [ ] TypeScript types are correct
+- [ ] No console errors
+
+---
+
+## Error Handling
+
+- Always handle loading states gracefully
+- Always handle empty states gracefully
+- Always handle errors gracefully
+- Show user-friendly error messages
+
+---
+
+## Next.js Specific Rules
+
+- Use Server Components by default (better performance)
+- Use `'use client'` only when needed (hooks, interactivity, browser APIs)
+- Use Next.js `Link` component for navigation (not `<a>` tags)
+- Use Next.js `Image` component for images (optimized loading)
+- Use `async` Server Components for data fetching
+
+---
+
+## Shopify Storefront API Rules
+
+- Always use `storefrontQuery` from `@/lib/shopify`
+- Use GraphQL queries from `@/lib/queries`
+- Handle errors gracefully
+- Show loading states while fetching
+- Cache data appropriately
+
+---
+
+## Component Composition
+
+Build complex UIs by composing simple components:
+
+```typescript
+// ✅ GOOD - Composing components
+<Card hover>
+  <h3>Product Title</h3>
+  <ButtonPrimary text="View Product" url="/product" />
+</Card>
+
+// ❌ BAD - Duplicating HTML
+<div className="custom-card">
+  <div className="custom-button">
+    {/* Duplicated card HTML */}
+  </div>
+</div>
+```
+
+---
+
+## Keeping This Up to Date
+
+When making changes to the codebase:
+- **Adding new tokens**: Update `app/tokens.css` and document in `design-system.mdc`
+- **Adding/removing components**: Update `components/index.ts` and this file's component list
+- **Changing file structure**: Update the File Organization section above
+- **Optimizing hardcoded values**: Replace with design tokens from `app/tokens.css`
+
+## Recent Optimizations (Media Kit Page)
+
+The Media Kit page has been optimized to use design tokens exclusively:
+
+### New Animation Tokens Added:
+- `--duration-chart-animation: 2500ms` - For Chart.js animations
+- `--duration-bar-animation: 1500ms` - For progress bar animations
+- `--delay-card-stagger-1/2/3` - Staggered card animation delays (0ms, 100ms, 200ms)
+- `--delay-bar-stagger: 100ms` - Bar animation delay multiplier
+
+### New Opacity Tokens Added:
+- `--opacity-logo-image: 0.9` - Logo image opacity
+- `--opacity-text-subtle: 0.75` - Subtle text opacity
+- `--opacity-text-muted: 0.9` - Muted text opacity
+- `--opacity-mask-opaque/mid/transparent` - Mask opacity values
+
+### Optimizations Applied:
+- ✅ Removed all inline styles from MediaKit components
+- ✅ Replaced hardcoded color fallbacks with CSS variable references
+- ✅ Replaced hardcoded animation durations/delays with tokens
+- ✅ Replaced hardcoded opacity values with tokens
+- ✅ All components now use design tokens exclusively
+
+**Reference:** See `app/media-kit/page.tsx` and MediaKit components for the optimized implementation pattern.
