@@ -20,6 +20,7 @@
 html {
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 html, body {
@@ -76,7 +77,7 @@ body > * {
   --master-bg-dark: #000000;                  /* Main page background */
   --master-bg-surface: #00101F;               /* Card and surface backgrounds */
   --master-bg-surface-elevated: #111827;
-  --master-bg-accent: #4b5563;               /* Background overlay color (separate from primary) */
+  --master-bg-accent: #000000;               /* Background overlay color (separate from primary) */
   
   /* Background gradient colors for diagonal wash */
   --bg-dark: #000000;

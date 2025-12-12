@@ -3408,8 +3408,8 @@ textarea::placeholder,
   bottom: 0;
   width: 100%;
   height: 100%;
-  /* Background color overlay - stays fixed (solid color doesn't move) */
-  background-color: var(--color-background-section);
+  /* Background color overlay for odd sections: lighter gray to let gradients show through */
+  background-color: color-mix(in srgb, #4b5563 15%, transparent);
   /* Grid pattern - fixed to viewport, sections scroll over it */
   background-image:
     linear-gradient(90deg, var(--line-color) var(--line-width), transparent var(--line-width)),
@@ -3634,7 +3634,7 @@ textarea::placeholder,
    ============================================ */
 
 
-/* Even sections: 5% bg overlay, show masked grid */
+/* Even sections: darker overlay (almost completely dark) */
 .ds-default-background > *:nth-child(even).ds-media-kit-hero-section::before,
 .ds-default-background > *:nth-child(even).ds-media-kit-logos-section::before,
 .ds-default-background > *:nth-child(even).ds-media-kit-demographics-section::before,
@@ -3655,16 +3655,9 @@ textarea::placeholder,
 .ds-default-background > *:nth-child(even) .ds-media-kit-faq-section::before,
 /* Contact section should also be darker (treat as even) */
 .ds-default-background > *:last-child.ds-media-kit-contact-section::before {
-  /* 5% background overlay (subtle), keep grid pattern */
-  background-color: color-mix(in srgb, var(--master-bg-accent) 5%, transparent);
-  /* Ensure grid uses same background-image setup - it's already fixed-attachment so should match */
-  background-image:
-    linear-gradient(90deg, var(--line-color) var(--line-width), transparent var(--line-width)),
-    linear-gradient(var(--line-color) var(--line-width), transparent var(--line-width));
-  background-size: 50px 50px, 50px 50px;
-  background-position: center center;
-  background-attachment: fixed;
-  background-repeat: repeat;
+  /* Even sections: fully black overlay, no grid */
+  background-color: #000000;
+  background-image: none;
 }
 
 /* Ensure hover glow effects work on even sections - same as odd sections */
