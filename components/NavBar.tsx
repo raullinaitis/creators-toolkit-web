@@ -25,7 +25,6 @@ export default function NavBar() {
   }
 
   const primaryNav = [
-    { text: 'Prompt Pack', url: '/power-prompts' },
     { text: 'Media Kit', url: '/media-kit' },
   ]
 
