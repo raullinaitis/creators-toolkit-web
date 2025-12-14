@@ -89,6 +89,8 @@ export type { MediaKitAboutV2Props } from './MediaKitAboutV2'
 
 export { default as HeroSales } from './HeroSales'
 export { default as MediaKitHero } from './MediaKitHero'
+export { default as NanoHero } from './NanoHero'
+export { default as PromptPackHero } from './PromptPackHero'
 export { default as ShortcutSection } from './ShortcutSection'
 export { default as DifferenceSection } from './DifferenceSection'
 export { default as ProblemSolution } from './ProblemSolution'

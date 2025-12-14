@@ -26,7 +26,7 @@ export default function NavBar() {
 
   const primaryNav = [
     { text: 'Media Kit', url: '/media-kit' },
-    { text: 'Nano Banana Pro Prompt Pack', url: '/nano-banana-pro-prompt-pack' },
+    { text: 'Nano Banana Library', url: '/nano-banana-library' },
   ]
 
   useEffect(() => {

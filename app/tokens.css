@@ -479,7 +479,7 @@ body > * {
 
 /* Default Section Background - Radial gradient with grid overlay */
 .ds-default-background {
-  background: transparent;
+  background: var(--color-background-base);
   position: relative;
 }
 

@@ -1,7 +1,7 @@
 /**
- * Nano Banana Pro Prompt Pack Page
+ * Nano Banana Library Page
  *
- * Sales page for the Nano Banana Pro Prompt Pack
+ * Sales page for the Nano Banana Library
  * Custom hero section with video masterclass
  */
 
@@ -17,8 +17,8 @@ import MediaKitContact from '@/components/MediaKitContact'
 import { BackToTop } from '@/components'
 
 export const metadata = {
-  title: 'Nano Banana Pro Prompt Pack | Creators Toolkit',
-  description: 'Stop gambling with generative AI. Take total visual control with the Nano Banana Pro Prompt Pack.',
+  title: 'Nano Banana Library | Creators Toolkit',
+  description: 'Stop gambling with generative AI. Take total visual control with the Nano Banana Library.',
 }
 
 // Sample logo data - replace with actual data from CMS/API
@@ -271,13 +271,14 @@ const sampleFAQs = [
   },
 ]
 
-export default function NanoBananaPromptPackPage() {
+export default function NanoBananaLibraryPage() {
   return (
     <div className="ds-default-background">
       <PromptPackHero
         eyebrowText="⚡ Optimized for Nano Banana"
-        headline={'Stop Gambling with Generative AI.\nTake Total Visual Control.'}
-        subheadline="Stop hoping for a lucky result. Watch the free masterclass below to learn the workflow, then unlock the system that gives you pro-level results every time."
+        headline={'Stop Gambling with AI\n[[Take Total Visual Control]]'}
+        subheadline="Stop hoping for a lucky result. Watch the free masterclass below to learn the workflow, then unlock the system that gives you pro-level results every time"
+        videoEmbedUrl="https://youtu.be/AeBOzler4nE"
         buttonText="Get the Dashboard ($19)"
         buttonLink="#pricing-section"
       />
