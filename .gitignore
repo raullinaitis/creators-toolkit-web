@@ -1,0 +1,8 @@
+# Exclude everything by default
+*
+
+# But don't ignore this .gitignore file itself
+!.gitignore
+
+# Don't ignore .git directory
+!.git/
